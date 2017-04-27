@@ -1,0 +1,26 @@
+{
+  "name": "myimdb",
+  "version": "1.0.0",
+  "description": "To store list of movies and actors",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha tests/*/*_tests.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "express": "^4.15.2",
+    "mocha": "^3.3.0",
+    "mongodb": "^2.2.26",
+    "mongoose": "^4.9.6",
+    "sinon": "^2.1.0",
+    "sinon-mongoose": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
