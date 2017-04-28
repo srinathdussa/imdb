@@ -13,4 +13,8 @@ module.exports = function (app, config) {
 		.get(movies.get_movie)
 		.put(movies.update_movie)
 		.delete(movies.delete_movie);
+
+
+	app.route('/moviesbyactorname/:name')
+		.get(movies.getmoviesbyActor);
 };

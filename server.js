@@ -5,10 +5,11 @@ const bodyparser = require('body-parser');
 
 
 var config = require('./config/config');
-var dbReference = require('./modules/dbWrapper')
+var dbReference = require('./modules/dbWrapper');
 var dbWrapper = dbReference(config);
 
 config.dataBase = '';
+config.dbWrapper = dbWrapper;
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 
@@ -17,7 +18,6 @@ var routes = require('./routes/moviesRoutes');
 routes(app, config);
 
 console.log('sample hI1');
-
 
 
 app.get('/', function (req, res) {
