@@ -40,7 +40,7 @@ module.exports = function (config) {
            
 
             var callback = function (err, data) {
-                console.log('datahere',data);
+                //console.log('datahere',data);
                 // This will run Mongo Query to fetch data based on ID.
                 if (err) {
                     response = { "error": true, "message": "Error fetching data" };

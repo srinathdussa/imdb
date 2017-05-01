@@ -26,15 +26,34 @@
             });
         }
     </script>
+    <style type="text/css">
+        /* unvisited link */
+a:link {
+    color: blue;
+}
 
+/* visited link */
+a:visited {
+    color: green;
+}
+
+/* mouse over link */
+a:hover {
+    color: hotpink;
+}
+
+/* selected link */
+a:active {
+    color: blue;
+}
+    </style>
 </head>
 <body>
 
-    <a data-bind="click:BindItems(1)">Show Movies</a>
+    <a href="#" data-bind="click:RenderMovies">Show Movies</a>
 
-    <a data-bind="click:BindItems(2)">Show Actors</a>
-
-    <a data-bind="click:BindItems(3)">Show Directors</a>
+    <a href="#" data-bind="click:RenderActors">Show Actors</a>
+    <a href="#" data-bind="click:RenderDirectors">Show Directors</a>
     <div data-bind="visible:RenderItem()==1">
         <h2>Movies</h2>
         <div>
@@ -56,7 +75,7 @@
                 <tbody data-bind="foreach: Movies">
                     <tr>
                         <td>
-                            <a data-bind="html: name,click:getMovie"></a>
+                            <a href="#" data-bind="html: name,click:getMovie"></a>
                         </td>
                         <td>
                             <div data-bind="html: language"></div>
@@ -92,6 +111,9 @@
                         <thead>
                             <tr>
                                 <th>
+                                    Role
+                                </th>
+                                <th>
                                     Name
                                 </th>
                                 <th>
@@ -110,7 +132,7 @@
                                 </td>
 
                                 <td>
-                                    <!--<a data-bind="html: name,click:getMovie"></a>-->
+                                    <a href="#" data-bind="html: name,click:getMovie"></a>
                                     <input data-bind="value:Name" />
                                 </td>
                                 <td>
@@ -157,7 +179,7 @@
                 <tbody data-bind="foreach: Persons">
                     <tr>
                         <td>
-                            <a data-bind="html: Name,click:getPerson"></a>
+                            <a href="#" data-bind="html: Name,click:getPerson"></a>
                         </td>
                         <td>
                             <div data-bind="html: Age"></div>
@@ -194,26 +216,27 @@
                                 <th>
                                     Name
                                 </th>
-                                <th>
+                                <!--<th>
                                     language
                                 </th>
                                 <th>
                                     year_released
-                                </th>
+                                </th>-->
                             </tr>
                         </thead>
                         <tbody data-bind="foreach: movies()">
                             <tr>
                                 <td>
                                     <!--<a data-bind="html: name,click:getMovie"></a>-->
-                                    <input data-bind="value:name" />
+                                    <!--<input data-bind="value:name" />-->
+                                    <select class="form-control" data-bind="options: MoviesToBind, optionsText: 'name',optionsValue:'name', value: name"></select>
                                 </td>
-                                <td>
+                                <!--<td>
                                     <input data-bind="value:language" />
                                 </td>
                                 <td>
                                     <input data-bind="value:year_released" />
-                                </td>
+                                </td>-->
                                 <td>
                                     <button data-bind="click:deleteMovie">Remove</button>
                                 </td>
@@ -238,6 +261,17 @@
                 Directors:3
             }
             self.RenderItem = ko.observable(self.RenderItems.Movies);
+
+            self.RenderMovies = function () {
+                self.BindItems(self.RenderItems.Movies);
+            }
+            self.RenderActors = function () {
+                self.BindItems(self.RenderItems.Actors);
+            }
+            self.RenderDirectors = function () {
+                self.BindItems(self.RenderItems.Directors);
+            }
+
             self.BindItems = function (itemType) {
                 self.RenderItem(itemType);
                 if (itemType == self.RenderItems.Actors || itemType == self.RenderItems.Directors) {
@@ -257,7 +291,7 @@
                 { Name: "Actor", roleTypeId: 1 },
             { Name: "Director", roleTypeId: 2 }
             ]
-
+            self.MoviesToBind = ko.observableArray();
             self.getMoviesList = function () {
 
                 invokeApi('movies', 'get', undefined, function (data) {
@@ -298,6 +332,13 @@
                 else {
                     self.showPerson(true);
                     self.PersonDetail(self.getPersonObj());
+
+                    //get movies list for ddl
+                    invokeApi('movies', 'get', undefined, function (data) {
+                        self.MoviesToBind(data.message.movies);
+                    }, (e) => {
+                        console.log('error')
+                    })
                 }
             }
             self.getMovieObj = function (data) {
@@ -390,6 +431,13 @@
                     console.log(data);
                     self.showPerson(true);
                     self.PersonDetail(self.getPersonObj(data.message));
+                }, (e) => {
+                    console.log('error')
+                })
+                
+                //get movies list for ddl
+                invokeApi('movies', 'get', undefined, function (data) {
+                    self.MoviesToBind(data.message.movies);
                 }, (e) => {
                     console.log('error')
                 })

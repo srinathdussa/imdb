@@ -2,7 +2,7 @@
 module.exports = function (config) {
 
     return {
-        list_all_actors: function (req, res) {
+        list_all_directors: function (req, res) {
             
             var callback = (err, data) => {
                 if (err) {
@@ -12,11 +12,11 @@ module.exports = function (config) {
                 }
                 res.json(response);
             }
-            config.dbWrapper.getAllActors({}, callback);
+            config.dbWrapper.getAllDirectors({}, callback);
             
         },
 
-        add_actor: function (req, res) {
+        add_director: function (req, res) {
             var movieDoc = req.body;
             
             // Add strict validation when you use this in Production.
@@ -33,10 +33,10 @@ module.exports = function (config) {
                 }
                 res.json(response);
             }
-            config.dbWrapper.addActor(movieDoc, callback);
+            config.dbWrapper.addDirector(movieDoc, callback);
         },
 
-        get_actor: function (req, res) {
+        get_director: function (req, res) {
         
             var response = {};
            
@@ -54,11 +54,11 @@ module.exports = function (config) {
                 }
                 res.json(response);
             }
-            config.dbWrapper.getActor(req.params, callback);
+            config.dbWrapper.getDirector(req.params, callback);
             
         },
 
-        update_actor: function (req, res) {
+        update_director: function (req, res) {
             var response = {};
             
             // first find out record exists or not
@@ -73,11 +73,11 @@ module.exports = function (config) {
             }
             var params=req.body;
             params.id=req.params.id;//populate id
-            config.dbWrapper.updateActor(params, callback);
+            config.dbWrapper.updateDirector(params, callback);
 
         },
 
-        delete_actor: function (req, res) {
+        delete_director: function (req, res) {
             var db = config.dataBase;
             var response = {};
             // find the data
@@ -94,7 +94,7 @@ module.exports = function (config) {
 
                 }
             };
-            config.dbWrapper.deleteactor(req.params, callback);
+            config.dbWrapper.deleteDirector(req.params, callback);
         },
 
 

@@ -61,6 +61,24 @@ module.exports = (config) => {
 
     mongo.getMovies = (params, callback) => {
         db.collection(collections.Movies).find().toArray(callback);
+        //db.collection(collections.Movies).update(
+        //    {},
+        //{
+        //    $pull: { Roles: { personId: 'Keerthi' } }
+        //},
+        //{ multi: true });
+        //db.collection(collections.Movies).update(
+        //          { _id: { $in: ['Nenu Local'] } },
+        //  {
+        //      $push: {
+        //          Roles: {
+        //              "RoleId": roleTypes.Actor,
+        //              "personId": 'Keerthi'//params._id
+        //          }
+        //      }
+        //  }, () => {
+        //      db.collection(collections.Movies).find().toArray(callback);
+        //  });
 
     };
 
@@ -79,8 +97,7 @@ module.exports = (config) => {
             var actorIdsModifed = [];
             for (var i = 0; i < params.actors.length; i++) {
                 //delete personsToAdd[i]._id;
-                console.log('id ', params.actors[i]._id);
-                console.log('name ', params.actors[i].Name);
+                
                 if (params.actors[i]._id != undefined && params.actors[i]._id != params.actors[i].Name) {
 
                     actorIdsModifed.push(params.actors[i]._id);
@@ -113,7 +130,7 @@ module.exports = (config) => {
     };
 
     mongo.getMovie = (params, callback) => {
-        console.log(params);
+        //console.log(params);
 
 
         db.collection(collections.Movies).aggregate([
@@ -154,7 +171,7 @@ module.exports = (config) => {
             if (data && data.length > 0) {
                 for (var i = 0, len = data.length; i < len; i++) {
                     var movieObj = data[i];
-                    console.log(movieObj);
+                    //console.log(movieObj);
                     movieObj.name = movieObj._id.name;
                     movieObj.language = movieObj._id.language;
                     movieObj.year_released = movieObj._id.year_released;
@@ -237,7 +254,7 @@ module.exports = (config) => {
 
     mongo.deleteActors = (params, callback) => {
         //params expected array of ids
-        console.log('deete', params);
+        //console.log('deete', params);
         db.collection(collections.Persons).deleteMany({ _id: { $in: params } }, function (err, data) {
             if (callback)
                 callback(err, data);
@@ -252,43 +269,53 @@ module.exports = (config) => {
 
     //Actors API Begin
     mongo.getAllActors = (params, callback) => {
-        getPersons({ RoleTypeId: roleTypes.Actor }, callback)
+        getPersons({ RoleTypeId:roleTypes.Actor }, callback)
     };
 
     mongo.addActor = (params, callback) => {
         //save persons
         //delete all matching persons in movies
         //embed only the ones in the list
-        params._id = params.name;
-        var movieIdsToLink=[];
-        for(var i=0;i<params.movies.length;i++){
-            movieIdsToLink.push(params.movies[i].name);
+        params._id = params.Name;
+        params.roleTypeId = roleTypes.Actor;
+        var movieIdsToLink = [];
+        if (params.movies != undefined) {
+            for (var i = 0; i < params.movies.length; i++) {
+                movieIdsToLink.push(params.movies[i].name);
+            }
+            delete params.movies;
         }
-        delete params.movies;
-
         mongo.saveActors([params], (err, data) => {
 
             db.collection(collections.Movies).update(
                 {},
             {
-                $pull: { Roles: { personId: params._id } }
+                $pull: { Roles: { $and: [{ personId: params._id }, { RoleId: roleTypes.Actor }] } }
+                
             },
-            { multi: true });
+            { multi: true }, (err1,data1) => {
+                //console.log('movies to add', movieIdsToLink)
+                callback(err1,data1);
+                if (movieIdsToLink.length > 0) {//insert 
 
-            
-            if(movieIdsToLink.length>0){//insert 
+                    db.collection(collections.Movies).update(
+                        { _id: { $in: movieIdsToLink } },
+                {
+                    $push: {
+                        Roles: {
+                            "RoleId": roleTypes.Actor,
+                            "personId": params._id
+                        }
+                    },
 
-                db.collection(collections.Movies).update(
-                    { _id: {$in :movieIdsToLink}},
-            {
-                $push: {
-                    Roles: {
-                        "RoleId": roleTypes.Actor,
-                        "personId": params._id
-                    }
+                },
+                { multi: true }
+
+                );
                 }
             });
-            }
+
+           
         });
 
     };
@@ -323,7 +350,8 @@ module.exports = (config) => {
             db.collection(collections.Movies).update(
             {},
         {
-            $pull: { Roles: { personId: params._id } }
+            $pull: { Roles: { $and: [{ personId: params.id }, { RoleId: roleTypes.Actor }] } }
+            
         },
         { multi: true });
             db.collection(collections.Persons).deleteOne({ _id: params.id }, savePerson);
@@ -340,7 +368,104 @@ module.exports = (config) => {
     };
     //Actors API END
 
+    //Directors
+    mongo.getAllDirectors = (params, callback) => {
+        getPersons({ RoleTypeId: roleTypes.Director }, callback)
+    };
 
+    mongo.addDirector = (params, callback) => {
+        //save persons
+        //delete all matching persons in movies
+        //embed only the ones in the list
+        params._id = params.Name;
+        params.roleTypeId = roleTypes.Director;
+        var movieIdsToLink = [];
+        if (params.movies != undefined) {
+            for (var i = 0; i < params.movies.length; i++) {
+                movieIdsToLink.push(params.movies[i].name);
+            }
+            delete params.movies;
+        }
+        mongo.saveActors([params], (err, data) => {
+
+            db.collection(collections.Movies).update(
+                {},
+            {
+                $pull: { Roles: { $and: [{ personId: params._id }, { RoleId: roleTypes.Director }] } }
+            },
+            { multi: true }, (err1, data1) => {
+                //console.log('movies to add', movieIdsToLink)
+                callback(err1, data1);
+                if (movieIdsToLink.length > 0) {//insert 
+
+                    db.collection(collections.Movies).update(
+                        { _id: { $in: movieIdsToLink } },
+                {
+                    $push: {
+                        Roles: {
+                            "RoleId": roleTypes.Director,
+                            "personId": params._id
+                        }
+                    },
+
+                },
+                { multi: true }
+
+                );
+                }
+            });
+
+
+        });
+
+    };
+
+    mongo.getDirector = (params, callback) => {
+
+        //db.collection(collections.Persons).find({ _id: new ObjectID(params.id) }).toArray(callback);
+
+
+        db.collection(collections.Persons).aggregate([
+            {
+                $match: { $and: [{ _id: params.id }, { roleTypeId: roleTypes.Director }] }
+                
+            },
+            {
+                $lookup: {
+                    from: collections.Movies,
+                    localField: "_id",
+                    foreignField: "Roles.personId",
+                    as: "movies"
+                }
+            }
+        ]).toArray(callback);
+
+    };
+
+    mongo.updateDirector = (params, callback) => {
+        var savePerson = function (err, data) {
+            mongo.addDirector(params, callback);
+
+        }
+        if (params.id != params.Name) {//delete all movie references with old name
+            db.collection(collections.Movies).update(
+            {},
+        {
+            $pull: { Roles: { $and: [{ personId: params.id }, { RoleId: roleTypes.Director }] } }
+        },
+        { multi: true });
+            db.collection(collections.Persons).deleteOne({ _id: params.id }, savePerson);
+
+        }
+        else {
+            savePerson();
+        }
+    }
+
+    mongo.deleteDirector = (params, callback) => {
+        console.log('delete ', params.id)
+        db.collection(collections.Persons).deleteOne({ _id: params.id }, callback);
+    };
 
     return mongo;
 }
