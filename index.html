@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
     <script type="text/javascript">
 
-        var invokeApi = function (url, method,params, successCallbak, errorcallback) {
+        var invokeApi = function (url, method, params, successCallbak, errorcallback) {
             var baseurl = 'http://localhost:3000/';
             $.ajax({
                 dataType: "json",
@@ -29,107 +29,234 @@
 
 </head>
 <body>
-    <h2>Movies</h2>
-    
-    <div>
-        
-        <table data-bind="if: Movies().length>0">
-            <thead>
-                <tr>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        Language
-                    </th>
-                    <th>
-                        Year
-                    </th>
-                </tr>
-            </thead>
-            <tbody data-bind="foreach: Movies">
-                <tr>
-                    <td>
-                        <a data-bind="html: name,click:getMovie"></a>
-                    </td>
-                    <td>
-                        <div data-bind="html: language"></div>
-                    </td>
-                    <td>
-                        <div data-bind="html: year_released"></div>
-                    </td>
-                    <td><button data-bind="click:deleteMovie">Delete</button> </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <button data-bind="click:showDetails,visible:!showMovie()">Add</button>
 
-    <br/>
-   
-    <div data-bind="visible:showMovie">
-        <h2>Movie Details</h2>
-        <!-- ko with: MovieDetail() -->
+    <a data-bind="click:BindItems(1)">Show Movies</a>
+
+    <a data-bind="click:BindItems(2)">Show Actors</a>
+
+    <a data-bind="click:BindItems(3)">Show Directors</a>
+    <div data-bind="visible:RenderItem()==1">
+        <h2>Movies</h2>
         <div>
-            Name :<input type="text" data-bind="value:name" />
+
+            <table data-bind="if: Movies().length>0">
+                <thead>
+                    <tr>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Language
+                        </th>
+                        <th>
+                            Year
+                        </th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: Movies">
+                    <tr>
+                        <td>
+                            <a data-bind="html: name,click:getMovie"></a>
+                        </td>
+                        <td>
+                            <div data-bind="html: language"></div>
+                        </td>
+                        <td>
+                            <div data-bind="html: year_released"></div>
+                        </td>
+                        <td><button data-bind="click:deleteMovie">Delete</button> </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div>
-            Language :<input type="text" data-bind="value:language" />
-        </div>
-        <div>
-            Year :<input type="text" data-bind="value:year_released" />
-        </div>
-        <div>            
-            Actors  <button data-bind="click:addActors">Add Actor</button>
-            <div data-bind="visible:actors().length>0">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>
-                                Name
-                            </th>
-                            <th>
-                                Age
-                            </th>
-                            <th>
-                                Gender
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="foreach: actors()">
-                        <tr>
-                            <td>
-                                <!--<a data-bind="html: name,click:getMovie"></a>-->
-                                <input data-bind="value:Name" />
-                            </td>
-                            <td>
-                                <input data-bind="value:Age" />
-                            </td>
-                            <td>
-                                <input data-bind="value:Gender" />
-                            </td>
-                            <td>
-                                <button data-bind="click:deleteActor">Remove</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <button data-bind="click:showDetails,visible:!showMovie()">Add</button>
+
+        <br />
+
+        <div data-bind="visible:showMovie">
+            <h2>Movie Details</h2>
+            <!-- ko with: MovieDetail() -->
+            <div>
+                Name :<input type="text" data-bind="value:name" />
             </div>
-        </div>
-        <!-- /ko -->
+            <div>
+                Language :<input type="text" data-bind="value:language" />
+            </div>
+            <div>
+                Year :<input type="text" data-bind="value:year_released" />
+            </div>
+            <div>
+                Actors  <button data-bind="click:addActors">Add Actor</button>
+                <div data-bind="visible:actors().length>0">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Age
+                                </th>
+                                <th>
+                                    Gender
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: actors()">
+                            <tr>
+                                <td>
 
-        <button data-bind="click:saveDetails,">Save</button>
-        <button data-bind="click:cancelDetails,">Cancel</button>
+                                    <select class="form-control" data-bind="options: RoleTypes, optionsText: 'Name',optionsValue:'roleTypeId', value: roleTypeId"></select>
+                                </td>
+
+                                <td>
+                                    <!--<a data-bind="html: name,click:getMovie"></a>-->
+                                    <input data-bind="value:Name" />
+                                </td>
+                                <td>
+                                    <input data-bind="value:Age" />
+                                </td>
+                                <td>
+                                    <input data-bind="value:Gender" />
+                                </td>
+                                <td>
+                                    <button data-bind="click:deleteActor">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /ko -->
+
+            <button data-bind="click:saveDetails,">Save</button>
+            <button data-bind="click:cancelDetails,">Cancel</button>
+        </div>
     </div>
-    
+
+
+    <div data-bind="visible:RenderItem()!==1">
+
+        <h2 data-bind="html:RenderItem()==2?'Actors':'Directors'"></h2>
+        <div>
+
+            <table data-bind="if: Persons().length>0">
+                <thead>
+                    <tr>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Age
+                        </th>
+                        <th>
+                            Gender
+                        </th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: Persons">
+                    <tr>
+                        <td>
+                            <a data-bind="html: Name,click:getPerson"></a>
+                        </td>
+                        <td>
+                            <div data-bind="html: Age"></div>
+                        </td>
+                        <td>
+                            <div data-bind="html: Gender"></div>
+                        </td>
+                        <td><button data-bind="click:deletePerson">Delete</button> </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button data-bind="click:showDetails,visible:!showPerson()">Add</button>
+        <br />
+
+        <div data-bind="visible:showPerson">
+            <h2 data-bind="html:RenderItem()==2?'Actor Details':'Director Details'" ></h2>
+            <!-- ko with: PersonDetail() -->
+            <div>
+                Name :<input type="text" data-bind="value:Name" />
+            </div>
+            <div>
+                Age :<input type="text" data-bind="value:Age" />
+            </div>
+            <div>
+                Gender :<input type="text" data-bind="value:Gender" />
+            </div>
+            <div>
+                Movies  <button data-bind="click:addMovie">Add Movies</button>
+                <div data-bind="visible:movies().length>0">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    language
+                                </th>
+                                <th>
+                                    year_released
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: movies()">
+                            <tr>
+                                <td>
+                                    <!--<a data-bind="html: name,click:getMovie"></a>-->
+                                    <input data-bind="value:name" />
+                                </td>
+                                <td>
+                                    <input data-bind="value:language" />
+                                </td>
+                                <td>
+                                    <input data-bind="value:year_released" />
+                                </td>
+                                <td>
+                                    <button data-bind="click:deleteMovie">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /ko -->
+
+            <button data-bind="click:savePersonDetails,">Save</button>
+            <button data-bind="click:cancelDetails,">Cancel</button>
+        </div>
+    </div>
     <script type="text/javascript">
         var viewModel = function () {
             var self = this;
-            self.Name = ko.observable('test1');
+
+            self.RenderItems = {
+                Movies: 1,
+                Actors: 2,
+                Directors:3
+            }
+            self.RenderItem = ko.observable(self.RenderItems.Movies);
+            self.BindItems = function (itemType) {
+                self.RenderItem(itemType);
+                if (itemType == self.RenderItems.Actors || itemType == self.RenderItems.Directors) {
+                    self.getPersonsList();
+                }
+                else {
+                    self.getMoviesList();
+                }
+            }
+
+            
 
             self.showMovie = ko.observable(false);
 
             self.Movies = ko.observableArray();
+            self.RoleTypes = [
+                { Name: "Actor", roleTypeId: 1 },
+            { Name: "Director", roleTypeId: 2 }
+            ]
 
             self.getMoviesList = function () {
 
@@ -145,16 +272,16 @@
             self.deleteMovie = function (selectedMov) {
                 invokeApi('movies/' + selectedMov._id, 'delete', undefined, function (data) {
                     self.getMoviesList();
-                    
+
                 }, (e) => {
                     console.log('error')
                 })
             }
 
             self.getMovie = function (selectedMov) {
-                
+
                 console.log(this);
-                invokeApi('movies/' + selectedMov._id, 'get',undefined, function (data) {
+                invokeApi('movies/' + selectedMov._id, 'get', undefined, function (data) {
                     console.log(data);
                     self.showMovie(true);
                     self.MovieDetail(self.getMovieObj(data.message[0]));
@@ -164,26 +291,29 @@
             }
 
             self.showDetails = function () {
-                self.showMovie(true);
-                
-                
-                self.MovieDetail(self.getMovieObj());
+                if (self.RenderItem() == self.RenderItems.Movies) {
+                    self.showMovie(true);
+                    self.MovieDetail(self.getMovieObj());
+                }
+                else {
+                    self.showPerson(true);
+                    self.PersonDetail(self.getPersonObj());
+                }
             }
             self.getMovieObj = function (data) {
 
                 var movieObj = {
-                    _id:ko.observable(data?data._id:undefined),
-                    name: ko.observable(data?data.name:''),
+                    _id: ko.observable(data ? data._id : undefined),
+                    name: ko.observable(data ? data.name : ''),
                     language: ko.observable(data ? data.language : ''),
                     year_released: ko.observable(data ? data.year_released : ''),
-                    actors:ko.observableArray(),
-                    direcors: ko.observableArray()
+                    actors: ko.observableArray(),                    
                 }
                 movieObj.addActors = function () {
                     var newActor = self.getNewActor(undefined, movieObj.actors);
                     movieObj.actors.push(ko.mapping.fromJS(newActor));
                 }
-                
+
                 if (data && data.actors) {
                     for (var i = 0; i < data.actors.length; i++) {
                         var existingActor = self.getNewActor(data.actors[i], movieObj.actors);
@@ -193,13 +323,16 @@
                 return movieObj;
             }
 
-           
+
 
             self.cancelDetails = function () {
-                self.showMovie(false);
+                if (self.RenderItem() == self.RenderItems.Movies)
+                    self.showMovie(false);
+                else
+                    self.showPerson(false);
             }
             self.saveDetails = function () {
-             
+
                 var movieData = ko.mapping.toJS(self.MovieDetail());
                 if (movieData._id) {//update
                     invokeApi('movies/' + movieData._id, 'put', movieData, function (data) {
@@ -222,26 +355,116 @@
 
             self.MovieDetail = ko.observable();
 
-            self.getNewActor = function (data,parentArr) {
+            self.getNewActor = function (data, parentArr) {
                 var actor = {
                     _id: ko.observable(data ? data._id : ''),
-                    Name: ko.observable(data?data.Name:''),
+                    Name: ko.observable(data ? data.Name : ''),
                     Age: ko.observable(data ? data.Age : ''),
                     Gender: ko.observable(data ? data.Gender : ''),
+                    roleTypeId: ko.observable(data ? data.roleTypeId : ''),
                 }
-                
+
                 actor.deleteActor = function (selectedActor) {
                     parentArr.remove(selectedActor);
                 }
                 return actor;
             }
-            self
             
 
+            self.Persons = ko.observableArray();
+            self.showPerson = ko.observable(false);
+            self.PersonDetail = ko.observable();
+            self.getPersonsList = function () {
+
+                invokeApi( self.RenderItem()==self.RenderItems.Actors? 'actors':'directors', 'get', undefined, function (data) {
+                    console.log(data);
+                    self.Persons(data.message.actors);
+                    self.showPerson(false);
+                }, (e) => {
+                    console.log('error')
+                })
+            }
+            self.getPerson = function (selectedPerson) {
+
+                invokeApi((self.RenderItem() == self.RenderItems.Actors ? 'actors' : 'directors') + "/" + selectedPerson._id, 'get', undefined, function (data) {
+                    console.log(data);
+                    self.showPerson(true);
+                    self.PersonDetail(self.getPersonObj(data.message));
+                }, (e) => {
+                    console.log('error')
+                })
+            }
+
+            self.deletePerson = function (selectedPerson) {
+                invokeApi((self.RenderItem() == self.RenderItems.Actors ? 'actors' : 'directors') + "/" + selectedPerson._id, 'delete', undefined, function (data) {
+                    self.getPersonsList();
+
+                }, (e) => {
+                    console.log('error')
+                })
+            }
+
+            self.getPersonObj = function (data) {
+
+                var personObj = {
+                    _id: ko.observable(data ? data._id : undefined),
+                    Name: ko.observable(data ? data.Name : ''),
+                    Age: ko.observable(data ? data.Age : ''),
+                    Gender: ko.observable(data ? data.Gender : ''),
+                    movies: ko.observableArray(),
+                }
+                personObj.addMovie = function () {
+                    var newActedMovie = self.getNewActedMovie(undefined, personObj.movies);
+                    personObj.movies.push(ko.mapping.fromJS(newActedMovie));
+                }
+
+                if (data && data.movies) {
+                    for (var i = 0; i < data.movies.length; i++) {
+                        var existingMovie = self.getNewActedMovie(data.movies[i], personObj.movies);
+                        personObj.movies.push(ko.mapping.fromJS(existingMovie));
+                    }
+                }
+                return personObj;
+            }
+
+            self.getNewActedMovie = function (data, parentArr) {
+                var movie = {
+                    _id: ko.observable(data ? data._id : ''),
+                    name: ko.observable(data ? data.name : ''),
+                    language: ko.observable(data ? data.language : ''),
+                    year_released: ko.observable(data ? data.year_released : ''),
+                }
+
+                movie.deleteMovie = function (selectedmovie) {
+                    parentArr.remove(selectedmovie);
+                }
+                return movie;
+            }
+
+            self.savePersonDetails = function () {
+                var personData = ko.mapping.toJS(self.PersonDetail());
+                if (personData._id) {//update
+                    invokeApi((self.RenderItem() == self.RenderItems.Actors ? 'actors' : 'directors') + "/" + personData._id, 'put', personData, function (data) {
+                        console.log(data);
+                        self.getPersonsList();
+                    }, (e) => {
+                        console.log('error')
+                    })
+                }
+                else {//new
+                    invokeApi((self.RenderItem() == self.RenderItems.Actors ? 'actors' : 'directors') , 'post', personData, function (data) {
+                        console.log(data);
+                        self.getPersonsList();
+                    }, (e) => {
+                        console.log('error')
+                    })
+                }
+                return false;
+            }
         };
         ko.applyBindings(viewModel);
         self.getMoviesList();
-        
+
     </script>
 </body>
 </html>
