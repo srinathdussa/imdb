@@ -224,7 +224,7 @@
 
             self.getNewActor = function (data,parentArr) {
                 var actor = {
-                    _id: ko.observable(data ? data._id : undefined),
+                    _id: ko.observable(data ? data._id : ''),
                     Name: ko.observable(data?data.Name:''),
                     Age: ko.observable(data ? data.Age : ''),
                     Gender: ko.observable(data ? data.Gender : ''),

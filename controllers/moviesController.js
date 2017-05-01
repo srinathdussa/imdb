@@ -27,7 +27,7 @@ module.exports = function (config) {
                 if (err) {
                     response = { "error": true, "message": "Error adding data" };
                 } else {
-                    response = { "error": false, "message": params };
+                    response = { "error": false, "message": result };
                 }
                 res.json(response);
             }

@@ -22,7 +22,7 @@ console.log('sample hI1');
 
 app.get('/', function (req, res) {
     //res.send('Hello');
-    res.sendFile(__dirname + '/Home.html');
+    res.sendFile(__dirname + '/' + config.homepage);
 });
 
 app.post('/quotes', (req, res) => {
