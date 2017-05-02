@@ -61,24 +61,7 @@ module.exports = (config) => {
 
     mongo.getMovies = (params, callback) => {
         db.collection(collections.Movies).find().toArray(callback);
-        //db.collection(collections.Movies).update(
-        //    {},
-        //{
-        //    $pull: { Roles: { personId: 'Keerthi' } }
-        //},
-        //{ multi: true });
-        //db.collection(collections.Movies).update(
-        //          { _id: { $in: ['Nenu Local'] } },
-        //  {
-        //      $push: {
-        //          Roles: {
-        //              "RoleId": roleTypes.Actor,
-        //              "personId": 'Keerthi'//params._id
-        //          }
-        //      }
-        //  }, () => {
-        //      db.collection(collections.Movies).find().toArray(callback);
-        //  });
+        
 
     };
 
